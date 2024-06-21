@@ -1,6 +1,7 @@
 package com.example.tedf
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.DrawableRes
@@ -32,6 +33,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,26 +51,56 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tedf.R.drawable.logo_v3
 import com.example.tedf.data.DataSource
 import com.example.tedf.model.EnergyDrink
 import com.example.tedf.ui.theme.TedfTheme
+import com.example.tedf.viewmodel.RankingViewModel
 
+private const val TAG = "MainActivity"
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            TedfTheme {
-                   TedfApp()
+        override fun onCreate(savedInstanceState: Bundle?) {
+            super.onCreate(savedInstanceState)
+            setContent {
+                Log.d(TAG,"onCreate called")
+                TedfTheme {
+                       TedfApp()
+                    }
                 }
             }
+        override fun onStart(){
+            super.onStart()
+            Log.d(TAG, "onStart Called")
         }
+    override fun onResume(){
+        super.onResume()
+        Log.d(TAG, "onResume Called")
     }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause Called")
+    }
+
+    override fun onStop(){
+        super.onStop()
+        Log.d(TAG, "onStop Called")
+    }
+
+    override fun onDestroy(){
+        super.onDestroy()
+        Log.d(TAG, "onDestroy")
+    }
+    }
+
 val titleFontFamily = FontFamily(
     Font(R.font.jaini_regular)
 )
 @Composable
-fun SplashPage(slogan: String, modifier: Modifier = Modifier) {
+fun SplashPage(slogan: String, rankingViewModel: RankingViewModel = viewModel(), modifier: Modifier = Modifier) {
+
+    val uiStateSpashPage by rankingViewModel.uiState.collectAsState()
     val image = painterResource(id = logo_v3)
     var descriptionField by remember {mutableStateOf("Say something...?")}
 
@@ -172,7 +204,10 @@ fun TopDrinkCard(energyDrink: EnergyDrink, modifier:Modifier = Modifier){
         fontFamily = titleFontFamily ,
         modifier = modifier
     )
-    EnergyDrinkCard(energyDrink, modifier.padding(30.dp).size(150.dp))
+    EnergyDrinkCard(energyDrink,
+        modifier
+            .padding(30.dp)
+            .size(150.dp))
 }
 @Composable
 fun EnergyDrinkList(energyDrinkList: List<EnergyDrink>, modifier: Modifier = Modifier){
@@ -235,8 +270,8 @@ fun TedfApp(modifier: Modifier = Modifier) {
     TedfTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             SplashPage(
-                stringResource(R.string.slogan),
-                modifier.wrapContentSize(Alignment.TopCenter)
+                slogan = stringResource(R.string.slogan),
+                modifier = modifier.wrapContentSize(Alignment.TopCenter)
             )
         }
     }
