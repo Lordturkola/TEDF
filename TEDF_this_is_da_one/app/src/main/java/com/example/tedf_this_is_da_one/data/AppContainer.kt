@@ -1,8 +1,6 @@
 package com.example.tedf_this_is_da_one.data
 
-import android.content.Context
-
-    interface IAppContainer {
+interface IAppContainer {
 
     }
 
@@ -13,5 +11,12 @@ import android.content.Context
         /**
          * Implementation dependencies neededd here
          */
-
+        companion object {
+            enum class HomeScreenNav() {
+                Home,
+                Review,
+                Edit,
+                View,
+            }
+        }
     }

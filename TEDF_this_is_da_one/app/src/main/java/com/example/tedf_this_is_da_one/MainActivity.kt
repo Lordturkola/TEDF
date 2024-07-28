@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tedf_this_is_da_one.ui.theme.TEDF_this_is_da_oneTheme
-import com.example.tedf_this_is_da_one.view.HomeViewModel
+import com.example.tedf_this_is_da_one.viewmodel.HomeViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,7 +27,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    //Greeting("Android")
+                    TedfApp()
                 }
             }
         }
