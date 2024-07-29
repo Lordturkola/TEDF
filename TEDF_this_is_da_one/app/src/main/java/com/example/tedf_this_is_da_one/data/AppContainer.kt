@@ -4,21 +4,26 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 
 interface IAppContainer {
+    val TedfCollection: CollectionReference
+}
+
+/**
+ * Container that contains all depeneencies needed
+ */
+class AppContainer() : IAppContainer {
+    /**
+     * Implementation dependencies neededd here
+     */
+    override val TedfCollection: CollectionReference by lazy {
+        FirebaseFirestore.getInstance().collection("TEDF")
     }
 
-    /**
-     * Container that contains all depeneencies needed
-     */
-    class AppContainer() : IAppContainer {
-        /**
-         * Implementation dependencies neededd here
-         */
-        companion object {
-            enum class HomeScreenNav() {
-                Home,
-                Review,
-                Edit,
-                View,
-            }
+    companion object {
+        enum class HomeScreenNav() {
+            Home,
+            Review,
+            Edit,
+            View,
         }
     }
+}

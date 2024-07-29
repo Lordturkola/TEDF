@@ -9,7 +9,7 @@ import com.example.tedf_this_is_da_one.viewmodel.HomeViewModel
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
-            HomeViewModel()
+            HomeViewModel(TedfApplication().container.TedfCollection)
         }
     }
 }

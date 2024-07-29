@@ -17,8 +17,6 @@ import androidx.navigation.NavHostController
 import com.example.tedf_this_is_da_one.AppViewModelProvider
 import com.example.tedf_this_is_da_one.viewmodel.HomeViewModel
 import com.example.tedf_this_is_da_one.viewmodel.energyDrinkItem
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
 
 
 @Composable
@@ -30,9 +28,8 @@ fun HomeScreen(
 
     ) {
     val state by viewModel.uiState.collectAsState()
-    val TedfCollection: CollectionReference = FirebaseFirestore.getInstance().collection("TEDF")
+    val db = viewModel.TedfCollection.document("energydrinks")
 
-    val db = TedfCollection.document("energydrinks")
     val entry = hashMapOf(
         Pair("name", "mmmonster"),
         Pair("rating", "0"),
