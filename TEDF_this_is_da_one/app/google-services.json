@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "681393238497",
+    "project_id": "tedf-3a048",
+    "storage_bucket": "tedf-3a048.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:681393238497:android:5d15466d4e583373fce2a0",
+        "android_client_info": {
+          "package_name": "com.example.tedf_this_is_da_one"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmb1BFzlAYasypYtMPcWOfKjtWQBXI4b8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

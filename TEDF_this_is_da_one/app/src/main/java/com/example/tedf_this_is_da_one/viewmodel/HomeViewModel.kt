@@ -9,9 +9,12 @@ import kotlinx.coroutines.flow.update
 class HomeViewModel(): ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
-    fun updateState(greeting: String) {
+    fun updateState(greeting: String, energyDrinkItem: energyDrinkItem? = energyDrinkItem()) {
         _uiState.update {
-            it.copy(greeting = greeting)
+            it.copy(
+                greeting = greeting,
+                energyDrinkItem = energyDrinkItem as energyDrinkItem
+            )
         }
     }
 }
@@ -19,4 +22,13 @@ class HomeViewModel(): ViewModel() {
 
 data class HomeUiState(
     val greeting: String = "fuck you",
+    val energyDrinkItem: energyDrinkItem = energyDrinkItem()
+)
+
+data class energyDrinkItem(
+    val name: String ="No name",
+    val rating: String ="",
+    val price: String="",
+    val caffeine: String="",
+    val user: String="",
 )

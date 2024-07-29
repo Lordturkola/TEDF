@@ -1,7 +1,9 @@
 package com.example.tedf_this_is_da_one.data
 
-interface IAppContainer {
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 
+interface IAppContainer {
     }
 
     /**
