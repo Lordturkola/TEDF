@@ -26,9 +26,9 @@ fun TedfApp(navHostController: NavHostController = rememberNavController()) {
             HomeScreen(
                 modifier = Modifier,
                 navController = navHostController,
-                onNextClicked = { navHostController.navigate(AppContainer.Companion.HomeScreenNav.Review.name) })
+                onNextClicked = { navHostController.navigate(AppContainer.Companion.HomeScreenNav.Review.name)},
+                context = LocalContext.current)
             // gets the context of the the current active state navigated to ?
-            val context = LocalContext.current
         }
         composable(route = AppContainer.Companion.HomeScreenNav.View.name) {
             ViewItemScreen(

@@ -1,6 +1,8 @@
 package com.example.tedf_this_is_da_one.view
 
 import android.content.ContentValues.TAG
+import android.content.Context
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -19,8 +21,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.tedf_this_is_da_one.AppViewModelProvider
+import com.example.tedf_this_is_da_one.R
 import com.example.tedf_this_is_da_one.data.EnergyDrinkItem
 import com.example.tedf_this_is_da_one.viewmodel.HomeViewModel
+import com.google.firebase.storage.FirebaseStorage
 
 
 @Composable
@@ -29,6 +33,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
     navController: NavHostController,
     onNextClicked: () -> Unit,
+    context: Context,
 
     ) {
     val state by viewModel.uiState.collectAsState()
@@ -52,11 +57,15 @@ fun HomeScreen(
                 .addOnFailureListener { exception ->
                     Log.e(TAG, "Error uploading.", exception)
                 }
-            /*
-            val drawable: Drawable? = Resources.getSystem().getDrawable(com.example.tedf_this_is_da_one.R.drawable.monster, null)
-           // val drawable2: Drawable? = ResourcesCompat.getDrawable(Current., R.drawable.monster, null)
-            val data = EnergyDrinkItem.toByteArray((drawable as Drawable).toBitmap())
 
+            //val data = EnergyDrinkItem.toByteArray(R.drawable.monster.toDrawable().toBitmap(50,50))
+            val data = EnergyDrinkItem.toByteArray(
+                BitmapFactory.decodeResource(
+                    context.resources,
+                    R.drawable.monster
+                )
+            )
+            //val data = EnergyDrinkItem.toByteArray(BitmapFactory.decodeFile("""C:\Users\andre\GIT_PROJECTS_FUUUCK\TEDF\TEDF_this_is_da_one\app\src\main\res\drawable\monster.jpg"""))
             val uploadTask =
                 FirebaseStorage.getInstance().getReference().child("energydrinks/monster.jpg")
                     .putBytes(data)
@@ -67,7 +76,7 @@ fun HomeScreen(
                 // ...
                 Log.d(TAG, "Succesfully uploaded image")
             }
-*/
+
         }) {
             Text(text = "click me to upload")
         }
