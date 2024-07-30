@@ -16,6 +16,8 @@ fun ReviewItemScreen(
     onNextClicked: ()->Unit,
     onCancelClicked: ()->Unit,
 ) {
+    val db = viewModel.TedfCollection.document("energydrinks")
+
     Column {
         Text(text = "Rev")
         OutlinedButton(onClick = onNextClicked) {

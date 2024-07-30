@@ -17,6 +17,8 @@ comGoogleGmsGoogleServicesGradlePlugin = "4.4.2"
 firebaseBom = "33.1.2"
 firebaseAnalytics = "22.0.2"
 firebaseFirestore = "25.0.0"
+firebaseStorage = "21.0.0"
+appcompatResources = "1.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -42,6 +44,8 @@ com-google-gms-google-services-gradle-plugin = { group = "com.google.gms.google-
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
+firebase-storage = { group = "com.google.firebase", name = "firebase-storage", version.ref = "firebaseStorage" }
+androidx-appcompat-resources = { group = "androidx.appcompat", name = "appcompat-resources", version.ref = "appcompatResources" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

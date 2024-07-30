@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,12 +38,10 @@ class MainActivity : ComponentActivity() {
 fun Greeting(name: String, modifier: Modifier = Modifier, viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)) {
     val uiState by viewModel.uiState.collectAsState()
     Text(
-        text = uiState.greeting,
+        text = "whaterv",
         modifier = modifier
     )
-    Button(onClick = { viewModel.updateState("No, fucckk you!!!") }) {
 
-    }
 }
 
 @Preview(showBackground = true)

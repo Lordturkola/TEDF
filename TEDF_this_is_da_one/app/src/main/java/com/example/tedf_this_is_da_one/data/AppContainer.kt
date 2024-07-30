@@ -15,7 +15,7 @@ class AppContainer() : IAppContainer {
      * Implementation dependencies neededd here
      */
     override val TedfCollection: CollectionReference by lazy {
-        FirebaseFirestore.getInstance().collection("TEDF")
+        FirebaseFirestore.getInstance().collection("energydrinks")
     }
 
     companion object {

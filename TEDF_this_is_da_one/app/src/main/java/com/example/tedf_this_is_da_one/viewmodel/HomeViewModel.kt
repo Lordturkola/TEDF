@@ -1,35 +1,56 @@
 package com.example.tedf_this_is_da_one.viewmodel
 
+import android.content.ContentValues.TAG
+import android.util.Log
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
+import com.example.tedf_this_is_da_one.data.EnergyDrinkItem
 import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.toObjects
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class HomeViewModel( val TedfCollection: CollectionReference): ViewModel() {
+class HomeViewModel(val TedfCollection: CollectionReference) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
-    fun updateState(greeting: String, energyDrinkItem: energyDrinkItem? = energyDrinkItem()) {
+    init {
+        TedfCollection.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                Log.w(TAG, "Listen failed.", e)
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null) {
+                updateEnergyDrinks(snapshot.toObjects<EnergyDrinkItem>())
+                Log.w(TAG, "updating entries.", e)
+
+            } else {
+                Log.d(TAG, "Current data: null")
+            }
+        }
+    }
+    fun updateState(uiState: HomeUiState) {
         _uiState.update {
             it.copy(
-                greeting = greeting,
-                energyDrinkItem = energyDrinkItem as energyDrinkItem
+                energyDrinkItems = it.energyDrinkItems
             )
         }
     }
+    fun updateEnergyDrinks(energyDrinks: List<EnergyDrinkItem>) {
+        _uiState.update {
+            it.copy(energyDrinkItems = energyDrinks)
+        }
+    }
+
+    fun updateBitmap(bitmap: ImageBitmap) {
+        _uiState.update {
+            it.copy(imageBitmap = bitmap)
+        }
+    }
+    data class HomeUiState(
+        val imageBitmap: ImageBitmap = ImageBitmap(1,1),
+        val energyDrinkItems: List<EnergyDrinkItem> = emptyList()
+    )
 }
-
-
-data class HomeUiState(
-    val greeting: String = "fuck you",
-    val energyDrinkItem: energyDrinkItem = energyDrinkItem()
-)
-
-data class energyDrinkItem(
-    val name: String ="No name",
-    val rating: String ="",
-    val price: String="",
-    val caffeine: String="",
-    val user: String="",
-)
