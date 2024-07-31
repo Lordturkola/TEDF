@@ -2,7 +2,6 @@ package com.example.tedf_this_is_da_one.viewmodel
 
 import android.content.ContentValues.TAG
 import android.util.Log
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import com.example.tedf_this_is_da_one.data.EnergyDrinkItem
 import com.google.firebase.firestore.CollectionReference
@@ -15,6 +14,7 @@ import kotlinx.coroutines.flow.update
 class HomeViewModel(val TedfCollection: CollectionReference) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+
     init {
         TedfCollection.addSnapshotListener { snapshot, e ->
             if (e != null) {
@@ -23,7 +23,9 @@ class HomeViewModel(val TedfCollection: CollectionReference) : ViewModel() {
             }
 
             if (snapshot != null) {
-                updateEnergyDrinks(snapshot.toObjects<EnergyDrinkItem>())
+                updateEnergyDrinks(
+                    snapshot.toObjects<EnergyDrinkItem>()
+                )
                 Log.w(TAG, "updating entries.", e)
 
             } else {
@@ -31,6 +33,7 @@ class HomeViewModel(val TedfCollection: CollectionReference) : ViewModel() {
             }
         }
     }
+
     fun updateState(uiState: HomeUiState) {
         _uiState.update {
             it.copy(
@@ -43,14 +46,8 @@ class HomeViewModel(val TedfCollection: CollectionReference) : ViewModel() {
             it.copy(energyDrinkItems = energyDrinks)
         }
     }
-
-    fun updateBitmap(bitmap: ImageBitmap) {
-        _uiState.update {
-            it.copy(imageBitmap = bitmap)
-        }
-    }
     data class HomeUiState(
-        val imageBitmap: ImageBitmap = ImageBitmap(1,1),
         val energyDrinkItems: List<EnergyDrinkItem> = emptyList()
     )
+
 }

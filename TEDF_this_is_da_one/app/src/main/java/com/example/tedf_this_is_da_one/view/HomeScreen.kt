@@ -7,22 +7,33 @@ import android.net.Uri
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.tedf_this_is_da_one.AppViewModelProvider
 import com.example.tedf_this_is_da_one.R
 import com.example.tedf_this_is_da_one.data.EnergyDrinkItem
+import com.example.tedf_this_is_da_one.data.loadImage
 import com.example.tedf_this_is_da_one.viewmodel.HomeViewModel
 import com.google.firebase.storage.FirebaseStorage
 
@@ -39,6 +50,7 @@ fun HomeScreen(
     val state by viewModel.uiState.collectAsState()
     val db = viewModel.TedfCollection
     Log.d(TAG, "starting upload")
+    val coroutineScope = rememberCoroutineScope()
 
     Column {
         Text(text = state.energyDrinkItems.firstOrNull().toString())
@@ -80,15 +92,33 @@ fun HomeScreen(
         }) {
             Text(text = "click me to upload")
         }
-        EnergyDrinkCard(energyDrink = state.energyDrinkItems.firstOrNull() ?: EnergyDrinkItem())
-        Spacer(modifier = Modifier.padding(40.dp))
-        OutlinedButton(onClick = onNextClicked) {
-            Text(text = "Next")
 
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            border = BorderStroke(width = 10.dp, color = Color(200, 0, 0, 1))
+        ) {
+            LazyColumn(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                items(items = state.energyDrinkItems) { item ->
+                    item.loadImage(state.energyDrinkItems, updateCallback = viewModel::updateEnergyDrinks)
+                    EnergyDrinkCard(energyDrink = item,
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .clickable { })
+                }
+
+            }
         }
     }
+    Spacer(modifier = Modifier.padding(40.dp))
+    OutlinedButton(onClick = onNextClicked) {
+        Text(text = "Next")
 
+    }
 }
+
 
 @Composable
 fun ImagePicker(onImageSelected: (Uri) -> Unit) {

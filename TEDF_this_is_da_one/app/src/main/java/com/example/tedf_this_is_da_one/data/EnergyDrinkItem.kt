@@ -15,7 +15,8 @@ data class EnergyDrinkItem(
     val price: String = "1",
     val caffeine: String = "1",
     val user: String = "1",
-    val image: String = "energydrinks/monster.jpg"
+    val image: String = "energydrinks/monster.jpg",
+    var bitmap: ImageBitmap = ImageBitmap(1, 1),
 ) {
     companion object {
         fun toByteArray(bitmap: Bitmap): ByteArray {
@@ -29,8 +30,8 @@ data class EnergyDrinkItem(
 }
 
 fun EnergyDrinkItem.toImage(): ImageBitmap {
-    var data = ImageBitmap(1,1)
-    if (this.image.isBlank()){
+    var data = ImageBitmap(1, 1)
+    if (this.image.isBlank()) {
         return data
     }
     val uploadTask =
@@ -48,4 +49,35 @@ fun EnergyDrinkItem.toImage(): ImageBitmap {
 
     }
     return data
+}
+
+fun EnergyDrinkItem.loadImage(
+    energyDrinks: List<EnergyDrinkItem>,
+    updateCallback: (energyDrinks: List<EnergyDrinkItem>) -> Unit,
+) {
+    val downloadImage =
+        FirebaseStorage.getInstance().getReference().child(this.image)
+            .getBytes(
+                Long.MAX_VALUE
+            )
+    downloadImage.addOnFailureListener {
+        // Handle unsuccessful uploads
+    }.addOnSuccessListener { taskSnapshot ->
+        Log.d("ENERGYDRINK DOWNLOAD", "success download fuckrink")
+        val options = BitmapFactory.Options()
+        val bitmap =
+            BitmapFactory.decodeByteArray(
+                taskSnapshot,
+                0,
+                taskSnapshot.size,
+                options
+            ).asImageBitmap()
+        val updatedList = energyDrinks.toMutableList()
+        updatedList.map {
+                if (it.image == this.image) it.bitmap = bitmap
+        }
+        updateCallback(updatedList)
+
+        Log.d("ENERGYDRINK DOWNLOAD", "copied?")
+    }
 }
