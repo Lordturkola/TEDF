@@ -4,6 +4,9 @@ import android.content.ContentValues
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import com.google.firebase.storage.FirebaseStorage
@@ -18,6 +21,7 @@ data class EnergyDrinkItem(
     val image: String = "energydrinks/monster.jpg",
     var bitmap: ImageBitmap = ImageBitmap(1, 1),
 ) {
+    var bitmapImg by mutableStateOf(ImageBitmap(1,1))
     companion object {
         fun toByteArray(bitmap: Bitmap): ByteArray {
             val stream = ByteArrayOutputStream()
@@ -51,10 +55,8 @@ fun EnergyDrinkItem.toImage(): ImageBitmap {
     return data
 }
 
-fun EnergyDrinkItem.loadImage(
-    energyDrinks: List<EnergyDrinkItem>,
-    updateCallback: (energyDrinks: List<EnergyDrinkItem>) -> Unit,
-) {
+fun EnergyDrinkItem.loadImage( energyDrinkItem: EnergyDrinkItem, callback: (energyDrinkItem: EnergyDrinkItem, bitmap: ImageBitmap) -> Unit
+): EnergyDrinkItem {
     val downloadImage =
         FirebaseStorage.getInstance().getReference().child(this.image)
             .getBytes(
@@ -72,12 +74,9 @@ fun EnergyDrinkItem.loadImage(
                 taskSnapshot.size,
                 options
             ).asImageBitmap()
-        val updatedList = energyDrinks.toMutableList()
-        updatedList.map {
-                if (it.image == this.image) it.bitmap = bitmap
-        }
-        updateCallback(updatedList)
-
+        this.bitmapImg = bitmap
         Log.d("ENERGYDRINK DOWNLOAD", "copied?")
+        callback(energyDrinkItem, bitmap)
     }
+    return this
 }

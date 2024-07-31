@@ -33,7 +33,6 @@ import androidx.navigation.NavHostController
 import com.example.tedf_this_is_da_one.AppViewModelProvider
 import com.example.tedf_this_is_da_one.R
 import com.example.tedf_this_is_da_one.data.EnergyDrinkItem
-import com.example.tedf_this_is_da_one.data.loadImage
 import com.example.tedf_this_is_da_one.viewmodel.HomeViewModel
 import com.google.firebase.storage.FirebaseStorage
 
@@ -101,8 +100,7 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                items(items = state.energyDrinkItems) { item ->
-                    item.loadImage(state.energyDrinkItems, updateCallback = viewModel::updateEnergyDrinks)
+                items(items = viewModel.uiState.value.energyDrinkItems) { item ->
                     EnergyDrinkCard(energyDrink = item,
                         modifier = Modifier
                             .padding(10.dp)
