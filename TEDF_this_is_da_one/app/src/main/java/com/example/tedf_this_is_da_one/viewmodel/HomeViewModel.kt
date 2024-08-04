@@ -25,7 +25,7 @@ class HomeViewModel(val TedfCollection: CollectionReference) : ViewModel() {
 
             if (snapshot != null) {
                 updateEnergyDrinks(
-                    snapshot.toObjects<EnergyDrinkItem>().map {
+                    snapshot.toObjects<EnergyDrinkItem>().filter { it.name.isNotBlank() }.map {
                         it.loadImage(it, ::updateBitmap)
                     }
                 )

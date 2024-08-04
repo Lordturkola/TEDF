@@ -1,71 +1,49 @@
 package com.example.tedf_this_is_da_one.data
 
-import android.content.ContentValues
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import com.google.firebase.storage.FirebaseStorage
+import com.example.tedf_this_is_da_one.TedfApplication
 import java.io.ByteArrayOutputStream
 
 data class EnergyDrinkItem(
-    val name: String = "No name",
-    val rating: String = "1",
-    val price: String = "1",
-    val caffeine: String = "1",
-    val user: String = "1",
-    val image: String = "energydrinks/monster.jpg",
+    val name: String = "",
+    val rating: String = "-1",
+    val price: String = "0.0",
+    val caffeine: String = "0.0",
+    val user: String = "Anonymous",
+    val image: String = "",
     var bitmap: ImageBitmap = ImageBitmap(1, 1),
 ) {
-    var bitmapImg by mutableStateOf(ImageBitmap(1,1))
     companion object {
-        fun toByteArray(bitmap: Bitmap): ByteArray {
+        fun toByteArray(bitmap: ImageBitmap): ByteArray {
             val stream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.PNG, 80, stream)
+            bitmap.asAndroidBitmap().compress(Bitmap.CompressFormat.PNG, 80, stream)
             return stream.toByteArray()
         }
     }
-
-
 }
 
-fun EnergyDrinkItem.toImage(): ImageBitmap {
-    var data = ImageBitmap(1, 1)
-    if (this.image.isBlank()) {
-        return data
-    }
-    val uploadTask =
-        FirebaseStorage.getInstance().getReference().child(this.image)
-            .getBytes(
-                Long.MAX_VALUE
-            )
-    uploadTask.addOnFailureListener {
-        // Handle unsuccessful uploads
-    }.addOnSuccessListener { taskSnapshot ->
-        // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
-        // ...
-        Log.d(ContentValues.TAG, "Successfully downloaded image")
-        data = BitmapFactory.decodeByteArray(taskSnapshot, 0, taskSnapshot.size).asImageBitmap()
 
-    }
-    return data
-}
-
-fun EnergyDrinkItem.loadImage( energyDrinkItem: EnergyDrinkItem, callback: (energyDrinkItem: EnergyDrinkItem, bitmap: ImageBitmap) -> Unit
+fun EnergyDrinkItem.loadImage(
+    energyDrinkItem: EnergyDrinkItem,
+    callback: (energyDrinkItem: EnergyDrinkItem, bitmap: ImageBitmap) -> Unit,
 ): EnergyDrinkItem {
+    if(this.image.isBlank()){
+        return this
+    }
     val downloadImage =
-        FirebaseStorage.getInstance().getReference().child(this.image)
+        TedfApplication().container.TedfStorage.child(this.image)
             .getBytes(
                 Long.MAX_VALUE
             )
     downloadImage.addOnFailureListener {
-        // Handle unsuccessful uploads
+
     }.addOnSuccessListener { taskSnapshot ->
-        Log.d("ENERGYDRINK DOWNLOAD", "success download fuckrink")
+        Log.d("ENERGYDRINK DOWNLOAD", "success download")
         val options = BitmapFactory.Options()
         val bitmap =
             BitmapFactory.decodeByteArray(
@@ -74,9 +52,19 @@ fun EnergyDrinkItem.loadImage( energyDrinkItem: EnergyDrinkItem, callback: (ener
                 taskSnapshot.size,
                 options
             ).asImageBitmap()
-        this.bitmapImg = bitmap
         Log.d("ENERGYDRINK DOWNLOAD", "copied?")
         callback(energyDrinkItem, bitmap)
     }
     return this
 }
+
+fun EnergyDrinkItem.toDatabaseEntity(): HashMap<String, Any> =
+    hashMapOf(
+        Pair("name", this.name),
+        Pair("rating", this.rating),
+        Pair("price", this.price),
+        Pair("caffeine", this.caffeine),
+        Pair("user", this.user),
+        Pair("image", this.image)
+    )
+

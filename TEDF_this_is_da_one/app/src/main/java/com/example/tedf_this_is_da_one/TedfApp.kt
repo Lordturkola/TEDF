@@ -43,6 +43,7 @@ fun TedfApp(navHostController: NavHostController = rememberNavController()) {
         }
         composable(route = AppContainer.Companion.HomeScreenNav.Review.name) {
             ReviewItemScreen(
+                context = LocalContext.current,
                 modifier = Modifier,
                 onNextClicked =
                 { navHostController.navigate(AppContainer.Companion.HomeScreenNav.View.name) },
