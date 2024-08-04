@@ -28,11 +28,10 @@ class EnergyDrinkViewModel(
 
     fun updateItem(energyDrinkItem: EnergyDrinkItem) {
         itemState = energyDrinkItem.copy()
-        updateUiState(uiState.copy(energyDrinkItem = itemState))
     }
 
     fun updateUiState(state: EnergyDrinkUiState) {
-        uiState = state.copy()
+        uiState = state.copy(energyDrinkItem = itemState.copy())
     }
 
     fun upload() {
@@ -47,7 +46,7 @@ class EnergyDrinkViewModel(
             }
 
         val data = EnergyDrinkItem.toByteArray(uiState.imageState)
-        val uploadTask = TedfStorage.child("energydrinks/${uiState.energyDrinkItem.name}")
+        val uploadTask = TedfStorage.child("energydrinks/${uiState.energyDrinkItem.image}")
             .putBytes(data)
         uploadTask.addOnFailureListener {
             // Handle unsuccessful uploads

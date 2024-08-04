@@ -36,11 +36,13 @@ fun EnergyDrinkItem.loadImage(
         return this
     }
     val downloadImage =
-        TedfApplication().container.TedfStorage.child(this.image)
+        TedfApplication().container.TedfStorage.child("energydrinks/"+this.image)
             .getBytes(
                 Long.MAX_VALUE
             )
     downloadImage.addOnFailureListener {
+        Log.d("ENERGYDRINK DOWNLOAD", "FAILED download : ${it}")
+        callback(energyDrinkItem.copy(image=""), ImageBitmap(1,1))
 
     }.addOnSuccessListener { taskSnapshot ->
         Log.d("ENERGYDRINK DOWNLOAD", "success download")

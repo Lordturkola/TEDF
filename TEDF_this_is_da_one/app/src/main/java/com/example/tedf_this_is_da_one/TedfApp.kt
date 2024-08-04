@@ -1,5 +1,7 @@
 package com.example.tedf_this_is_da_one
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,6 +16,7 @@ import com.example.tedf_this_is_da_one.view.HomeScreen
 import com.example.tedf_this_is_da_one.view.ReviewItemScreen
 import com.example.tedf_this_is_da_one.view.ViewItemScreen
 
+@RequiresApi(Build.VERSION_CODES.P)
 @Composable
 fun TedfApp(navHostController: NavHostController = rememberNavController()) {
 
@@ -28,7 +31,6 @@ fun TedfApp(navHostController: NavHostController = rememberNavController()) {
                 navController = navHostController,
                 onNextClicked = { navHostController.navigate(AppContainer.Companion.HomeScreenNav.Review.name)},
                 context = LocalContext.current)
-            // gets the context of the the current active state navigated to ?
         }
         composable(route = AppContainer.Companion.HomeScreenNav.View.name) {
             ViewItemScreen(
@@ -46,7 +48,7 @@ fun TedfApp(navHostController: NavHostController = rememberNavController()) {
                 context = LocalContext.current,
                 modifier = Modifier,
                 onNextClicked =
-                { navHostController.navigate(AppContainer.Companion.HomeScreenNav.View.name) },
+                { navHostController.navigate(AppContainer.Companion.HomeScreenNav.Home.name) },
                 onCancelClicked = {
                     navHostController.popBackStack(route = AppContainer.Companion.HomeScreenNav.Home.name, inclusive = false)
                 })

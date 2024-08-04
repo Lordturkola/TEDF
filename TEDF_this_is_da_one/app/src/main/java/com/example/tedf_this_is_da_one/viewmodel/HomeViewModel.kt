@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.update
 class HomeViewModel(val TedfCollection: CollectionReference) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+
     init {
         TedfCollection.addSnapshotListener { snapshot, e ->
             if (e != null) {
@@ -25,9 +26,10 @@ class HomeViewModel(val TedfCollection: CollectionReference) : ViewModel() {
 
             if (snapshot != null) {
                 updateEnergyDrinks(
-                    snapshot.toObjects<EnergyDrinkItem>().filter { it.name.isNotBlank() }.map {
-                        it.loadImage(it, ::updateBitmap)
-                    }
+                    snapshot.toObjects<EnergyDrinkItem>()
+                        .filter { it.name.isNotBlank() && it.image.isNotBlank() }.map {
+                            it.loadImage(it, ::updateBitmap)
+                        }
                 )
                 Log.w(TAG, "updating entries.", e)
 
@@ -46,13 +48,18 @@ class HomeViewModel(val TedfCollection: CollectionReference) : ViewModel() {
     }
 
     fun updateBitmap(energyDrinkItem: EnergyDrinkItem, bitmap: ImageBitmap) {
-        val newList = _uiState.value.energyDrinkItems.toMutableList()
-        newList.map {
-            if (it == energyDrinkItem) {
-                it.bitmap = bitmap
-            }
-        }
-        _uiState.value = HomeUiState(energyDrinkItems = newList, changed = !_uiState.value.changed)
+        val updatedList =
+            _uiState.value.energyDrinkItems.toMutableList().filter { it.image.isNotBlank() }
+                .map<EnergyDrinkItem, EnergyDrinkItem> {
+                    if (it == energyDrinkItem) {
+                        it.bitmap = bitmap
+                        it
+                    } else {
+                        it
+                    }
+                }
+        _uiState.value =
+            HomeUiState(energyDrinkItems = updatedList, changed = !_uiState.value.changed)
     }
 
 

@@ -5,6 +5,7 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
@@ -21,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toFile
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tedf_this_is_da_one.AppViewModelProvider
 
@@ -76,10 +76,17 @@ fun ReviewItemScreen(
 
         ImagePicker {
             val source = ImageDecoder.createSource(context.contentResolver, it)
-            viewModel.updateItem(itemState.copy(image = it.toFile().name))
-            viewModel.updateUiState(state.copy(imageState = ImageDecoder.decodeBitmap(source).asImageBitmap()))
+            viewModel.updateItem(itemState.copy(image = it.toString()))
+            viewModel.updateUiState(
+                state.copy(
+                    imageState = ImageDecoder.decodeBitmap(source).asImageBitmap()
+                )
+            )
         }
-        OutlinedButton(onClick = { viewModel.upload() }) {
+        OutlinedButton(onClick = {
+            viewModel.upload()
+            onNextClicked()
+        }) {
             Text(text = "Upload")
         }
         OutlinedButton(onClick = onCancelClicked) {
@@ -91,14 +98,16 @@ fun ReviewItemScreen(
 @Composable
 fun ImagePicker(onImageSelected: (Uri) -> Unit) {
     val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
+        contract = ActivityResultContracts.PickVisualMedia(),
         onResult = { uri: Uri? -> uri?.let { onImageSelected(it) } }
     )
 
     Button(
         colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
         onClick = {
-            launcher.launch("image/*")
+            launcher.launch(PickVisualMediaRequest(
+                ActivityResultContracts.PickVisualMedia.ImageOnly
+            ))
         }
     ) {
         Text("Select Image", color = Color.White)
