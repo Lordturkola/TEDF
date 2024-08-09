@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,6 +38,7 @@ fun EnergyDrinkCard(
     energyDrink: EnergyDrinkItem = EnergyDrinkItem(),
     viewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory),
 ) {
+    val bitmap by remember { mutableStateOf(energyDrink.bitmap) }
     val fontName = GoogleFont("Fontdiner Swanky")
     val fontFamily = FontFamily(
         Font(
@@ -64,15 +68,20 @@ fun EnergyDrinkCard(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.padding(10.dp)
             ) {
-                Column(horizontalAlignment = Alignment.Start , verticalArrangement = Arrangement.Top) {
-                    Image(
-                        bitmap = energyDrink.bitmap,
-                        contentDescription = null,
-                        contentScale = ContentScale.FillHeight,
-                        modifier = Modifier
-                            .height(100.dp)
-                            .padding(0.dp, 0.dp, 10.dp, 0.dp)
-                    )
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    bitmap?.let {
+                        Image(
+                            bitmap = it,
+                            contentDescription = null,
+                            contentScale = ContentScale.FillHeight,
+                            modifier = Modifier
+                                .height(100.dp)
+                                .padding(0.dp, 0.dp, 10.dp, 0.dp)
+                        )
+                    }
                 }
 
                 Column {

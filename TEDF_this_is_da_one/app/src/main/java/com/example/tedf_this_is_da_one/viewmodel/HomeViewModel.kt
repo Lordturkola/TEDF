@@ -2,8 +2,8 @@ package com.example.tedf_this_is_da_one.viewmodel
 
 import android.content.ContentValues.TAG
 import android.util.Log
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.tedf_this_is_da_one.data.EnergyDrinkItem
 import com.example.tedf_this_is_da_one.data.loadImage
 import com.google.firebase.firestore.CollectionReference
@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class HomeViewModel(val TedfCollection: CollectionReference) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -25,12 +26,11 @@ class HomeViewModel(val TedfCollection: CollectionReference) : ViewModel() {
             }
 
             if (snapshot != null) {
-                updateEnergyDrinks(
-                    snapshot.toObjects<EnergyDrinkItem>()
-                        .filter { it.name.isNotBlank() && it.image.isNotBlank() }.map {
-                            it.loadImage(it, ::updateBitmap)
+                    snapshot.toObjects<EnergyDrinkItem>().onEach {
+                        viewModelScope.launch{
+                            it.loadImage(::updateBitmap)
                         }
-                )
+                    }
                 Log.w(TAG, "updating entries.", e)
 
             } else {
@@ -47,19 +47,15 @@ class HomeViewModel(val TedfCollection: CollectionReference) : ViewModel() {
         }
     }
 
-    fun updateBitmap(energyDrinkItem: EnergyDrinkItem, bitmap: ImageBitmap) {
+    fun updateBitmap(energyDrinkItem: EnergyDrinkItem) {
         val updatedList =
-            _uiState.value.energyDrinkItems.toMutableList().filter { it.image.isNotBlank() }
-                .map<EnergyDrinkItem, EnergyDrinkItem> {
-                    if (it == energyDrinkItem) {
-                        it.bitmap = bitmap
-                        it
-                    } else {
-                        it
-                    }
+            _uiState.value.energyDrinkItems
+                .filter {it.name != energyDrinkItem.name && it.bitmap != null}.toMutableList().apply {
+                    add(
+                        energyDrinkItem
+                    )
                 }
-        _uiState.value =
-            HomeUiState(energyDrinkItems = updatedList, changed = !_uiState.value.changed)
+        updateEnergyDrinks(updatedList.toList())
     }
 
 
@@ -71,7 +67,6 @@ class HomeViewModel(val TedfCollection: CollectionReference) : ViewModel() {
 
     data class HomeUiState(
         val energyDrinkItems: List<EnergyDrinkItem> = emptyList(),
-        val changed: Boolean = false,
     )
 
 

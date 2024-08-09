@@ -24,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -55,9 +54,7 @@ fun HomeScreen(
 
     ) {
     val state by viewModel.uiState.collectAsState()
-    val db = viewModel.TedfCollection
     Log.d(TAG, "starting upload")
-    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         modifier = modifier.padding(10.dp),
@@ -84,7 +81,6 @@ fun HomeScreen(
             )
         }
     ) { innerpadding ->
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()

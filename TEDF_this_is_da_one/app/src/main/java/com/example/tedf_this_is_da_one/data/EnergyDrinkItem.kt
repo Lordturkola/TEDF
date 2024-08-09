@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import com.example.tedf_this_is_da_one.TedfApplication
+import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
 
 data class EnergyDrinkItem(
@@ -16,7 +17,7 @@ data class EnergyDrinkItem(
     val caffeine: String = "0.0",
     val user: String = "Anonymous",
     val image: String = "",
-    var bitmap: ImageBitmap = ImageBitmap(1, 1),
+    val bitmap: ImageBitmap? = null,
 ) {
     companion object {
         fun toByteArray(bitmap: ImageBitmap): ByteArray {
@@ -28,36 +29,35 @@ data class EnergyDrinkItem(
 }
 
 
-fun EnergyDrinkItem.loadImage(
-    energyDrinkItem: EnergyDrinkItem,
-    callback: (energyDrinkItem: EnergyDrinkItem, bitmap: ImageBitmap) -> Unit,
-): EnergyDrinkItem {
-    if(this.image.isBlank()){
-        return this
-    }
+suspend fun EnergyDrinkItem.loadImage(
+    callback: (energyDrinkItem: EnergyDrinkItem) -> Unit,
+) {
     val downloadImage =
-        TedfApplication().container.TedfStorage.child("energydrinks/"+this.image)
+        TedfApplication().container.TedfStorage.child("energydrinks/" + this.image)
             .getBytes(
                 Long.MAX_VALUE
             )
+    var updatedEnergyDrink: EnergyDrinkItem = this.copy(image = "", bitmap = null)
     downloadImage.addOnFailureListener {
         Log.d("ENERGYDRINK DOWNLOAD", "FAILED download : ${it}")
-        callback(energyDrinkItem.copy(image=""), ImageBitmap(1,1))
 
     }.addOnSuccessListener { taskSnapshot ->
         Log.d("ENERGYDRINK DOWNLOAD", "success download")
         val options = BitmapFactory.Options()
-        val bitmap =
+        updatedEnergyDrink = this.copy(
+            bitmap =
             BitmapFactory.decodeByteArray(
                 taskSnapshot,
                 0,
                 taskSnapshot.size,
                 options
             ).asImageBitmap()
+        )
         Log.d("ENERGYDRINK DOWNLOAD", "copied?")
-        callback(energyDrinkItem, bitmap)
+
     }
-    return this
+    downloadImage.await()
+    callback(updatedEnergyDrink)
 }
 
 fun EnergyDrinkItem.toDatabaseEntity(): HashMap<String, Any> =
