@@ -26,10 +26,12 @@ class HomeViewModel(val TedfCollection: CollectionReference) : ViewModel() {
             }
 
             if (snapshot != null) {
-                    snapshot.toObjects<EnergyDrinkItem>().onEach {
-                        viewModelScope.launch{
-                            it.loadImage(::updateBitmap)
-                        }
+                    _uiState.update {
+                        HomeUiState( energyDrinkItems = snapshot.toObjects<EnergyDrinkItem>().onEach {
+                            viewModelScope.launch {
+                                updateBitmap(it.loadImage())
+                            }
+                        })
                     }
                 Log.w(TAG, "updating entries.", e)
 

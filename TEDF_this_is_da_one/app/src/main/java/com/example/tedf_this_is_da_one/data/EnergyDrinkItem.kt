@@ -29,35 +29,36 @@ data class EnergyDrinkItem(
 }
 
 
-suspend fun EnergyDrinkItem.loadImage(
-    callback: (energyDrinkItem: EnergyDrinkItem) -> Unit,
-) {
-    val downloadImage =
-        TedfApplication().container.TedfStorage.child("energydrinks/" + this.image)
-            .getBytes(
-                Long.MAX_VALUE
-            )
+suspend fun EnergyDrinkItem.loadImage(): EnergyDrinkItem {
     var updatedEnergyDrink: EnergyDrinkItem = this.copy(image = "", bitmap = null)
-    downloadImage.addOnFailureListener {
-        Log.d("ENERGYDRINK DOWNLOAD", "FAILED download : ${it}")
+    try {
 
-    }.addOnSuccessListener { taskSnapshot ->
-        Log.d("ENERGYDRINK DOWNLOAD", "success download")
-        val options = BitmapFactory.Options()
-        updatedEnergyDrink = this.copy(
-            bitmap =
-            BitmapFactory.decodeByteArray(
-                taskSnapshot,
-                0,
-                taskSnapshot.size,
-                options
-            ).asImageBitmap()
-        )
-        Log.d("ENERGYDRINK DOWNLOAD", "copied?")
+        val downloadImage =
+            TedfApplication().container.TedfStorage.child("energydrinks/" + this.image)
+                .getBytes(
+                    Long.MAX_VALUE
+                ).addOnFailureListener {
+                    Log.d("ENERGYDRINK DOWNLOAD", "FAILED download : ${it}")
 
+                }.addOnSuccessListener { taskSnapshot ->
+                    Log.d("ENERGYDRINK DOWNLOAD", "success download")
+                    val options = BitmapFactory.Options()
+                    updatedEnergyDrink = this.copy(
+                        bitmap =
+                        BitmapFactory.decodeByteArray(
+                            taskSnapshot,
+                            0,
+                            taskSnapshot.size,
+                            options
+                        ).asImageBitmap()
+                    )
+                }
+
+        downloadImage.await()
+    } catch (e: com.google.firebase.storage.StorageException ){
+        Log.d("ENERGYDRINK DOWNLOAD", "could not find image")
     }
-    downloadImage.await()
-    callback(updatedEnergyDrink)
+    return updatedEnergyDrink
 }
 
 fun EnergyDrinkItem.toDatabaseEntity(): HashMap<String, Any> =
