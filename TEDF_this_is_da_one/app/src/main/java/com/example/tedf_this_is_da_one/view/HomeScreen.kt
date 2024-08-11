@@ -8,13 +8,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -43,7 +51,7 @@ import com.example.tedf_this_is_da_one.TedfApplication
 import com.example.tedf_this_is_da_one.viewmodel.HomeViewModel
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
@@ -51,15 +59,16 @@ fun HomeScreen(
     navController: NavHostController,
     onNextClicked: () -> Unit,
     context: Context,
-
-    ) {
+) {
     val state by viewModel.uiState.collectAsState()
+    val pullState = rememberPullRefreshState(refreshing = state.isLoading, onRefresh = {})
+
     Log.d(TAG, "starting upload")
 
     Scaffold(
-        modifier = modifier.padding(10.dp),
+        modifier = modifier.fillMaxWidth(),
         topBar = {
-            HomeLogo(modifier = Modifier.height(150.dp))
+            HomeLogo(modifier = Modifier.height(120.dp))
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -74,7 +83,7 @@ fun HomeScreen(
             Text(
                 text = "TEDF Colllective 2024",
                 modifier = Modifier
-                    .background(Color.Black)
+                    .background(Color.White)
                     .fillMaxWidth()
                     .padding(10.dp),
                 color = Color.Red,
@@ -87,7 +96,12 @@ fun HomeScreen(
                 .padding(innerpadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier
+                .wrapContentWidth()
+                .height(8.dp)
+                .background(Color.Red))
             LazyColumn(
+                modifier = Modifier,
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -97,8 +111,14 @@ fun HomeScreen(
                             .padding(10.dp)
                             .clickable { })
                 }
-
             }
+            PullRefreshIndicator(
+                refreshing = state.isLoading,
+                state = pullState,
+                Modifier
+                    .align(Alignment.CenterHorizontally),
+                contentColor = Color.Red
+            )
         }
     }
 }
@@ -115,7 +135,7 @@ fun HomeLogo(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .background(Color.Black)
+            .background(Color.White)
             .fillMaxWidth()
             .padding(0.dp, 0.dp, 0.dp, 20.dp)
     ) {

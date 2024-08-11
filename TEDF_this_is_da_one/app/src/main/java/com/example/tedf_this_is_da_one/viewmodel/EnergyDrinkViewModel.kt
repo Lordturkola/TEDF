@@ -1,4 +1,4 @@
-package com.example.tedf_this_is_da_one.view
+package com.example.tedf_this_is_da_one.viewmodel
 
 import android.content.ContentValues.TAG
 import android.util.Log

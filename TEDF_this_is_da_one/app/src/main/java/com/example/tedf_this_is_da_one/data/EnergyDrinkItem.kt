@@ -30,7 +30,7 @@ data class EnergyDrinkItem(
 }
 
 
-suspend fun EnergyDrinkItem.loadImage(): EnergyDrinkItem {
+suspend fun EnergyDrinkItem.loadImage(updateProgress: () -> Unit): EnergyDrinkItem {
     var updatedEnergyDrink: EnergyDrinkItem = this.copy(image = "", bitmap = null)
     try {
         val downloadImage =
@@ -59,6 +59,7 @@ suspend fun EnergyDrinkItem.loadImage(): EnergyDrinkItem {
         //set default image here
         Log.d("ENERGYDRINK DOWNLOAD EXCEPTION", "could not find image ${e}")
     }
+    updateProgress()
     return updatedEnergyDrink
 }
 

@@ -71,6 +71,7 @@ dependencies {
     implementation(libs.firebase.storage)
     implementation(libs.androidx.appcompat.resources)
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.androidx.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
