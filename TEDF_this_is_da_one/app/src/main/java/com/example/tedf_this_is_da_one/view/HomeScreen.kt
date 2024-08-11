@@ -1,8 +1,6 @@
 package com.example.tedf_this_is_da_one.view
 
-import android.content.ContentValues.TAG
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,6 +29,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -60,8 +59,6 @@ fun HomeScreen(
     val state by viewModel.uiState.collectAsState()
     val pullState = rememberPullRefreshState(refreshing = state.isLoading, onRefresh = {})
 
-    Log.d(TAG, "starting upload")
-
     Scaffold(
         modifier = modifier.fillMaxWidth(),
         topBar = {
@@ -71,6 +68,8 @@ fun HomeScreen(
             FloatingActionButton(
                 onClick = onNextClicked,
                 shape = MaterialTheme.shapes.medium,
+                contentColor = Color.White,
+                containerColor = Color.Red,
                 modifier = Modifier.padding(20.dp)
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "add drink")
@@ -86,17 +85,24 @@ fun HomeScreen(
                 color = Color.Red,
             )
         }
-    ) { innerpadding ->
+    ) {innerPadding ->
+
+        val colorStops = arrayOf(
+            0.0f to Color.White,
+            0.0f to Color.White,
+        )
         Column(
-            modifier = Modifier
+            modifier = Modifier.background(Brush.verticalGradient(colorStops = colorStops))
                 .fillMaxWidth()
-                .padding(innerpadding),
+                .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier
-                .wrapContentWidth()
-                .height(8.dp)
-                .background(Color.Red))
+            Spacer(
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .height(8.dp)
+                    .background(Color.Red)
+            )
             LazyColumn(
                 modifier = Modifier,
                 verticalArrangement = Arrangement.Center,
@@ -128,13 +134,16 @@ fun HomeLogo(modifier: Modifier = Modifier) {
     val fontFamily = FontFamily(
         Font(googleFont = fontName, fontProvider = TedfApplication().container.TedfFontProvider)
     )
+    val colorStops = arrayOf(
+        0f to Color(200,200,200),
+        1f to Color(255,200,210),
+    )
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
-            .background(Color.White)
-            .fillMaxWidth()
-            .padding(0.dp, 0.dp, 0.dp, 20.dp)
+            .fillMaxWidth().background(Brush.verticalGradient(colorStops = colorStops))
+            .padding(0.dp, 0.dp, 0.dp, 20.dp),
     ) {
         Image(
             painter = painterResource(id = R.drawable.logo),
@@ -145,7 +154,7 @@ fun HomeLogo(modifier: Modifier = Modifier) {
         Text(
             text = "Terrible Energy Drink Friday",
             fontFamily = fontFamily,
-            color = Color.Red,
+            color = Color.Black,
             fontSize = 30.sp
         )
     }

@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontFamily
@@ -46,6 +47,10 @@ fun EnergyDrinkCard(
             fontProvider = TedfApplication().container.TedfFontProvider
         )
     )
+    val colorStops = arrayOf(
+        0f to Color(200, 200, 210),
+        1f to Color(255, 200, 200),
+    )
     Card(
         modifier = modifier
     ) {
@@ -55,7 +60,7 @@ fun EnergyDrinkCard(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .fillMaxWidth()
-                .background(Color(parseColor("#fcbfbb")))
+                .background(Brush.verticalGradient(colorStops = colorStops))
         ) {
             Text(
                 text = energyDrink.name,
