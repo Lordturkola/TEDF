@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import com.example.tedf_this_is_da_one.TedfApplication
+import com.google.firebase.storage.StorageException
 import kotlinx.coroutines.tasks.await
 import java.io.ByteArrayOutputStream
 
@@ -32,7 +33,6 @@ data class EnergyDrinkItem(
 suspend fun EnergyDrinkItem.loadImage(): EnergyDrinkItem {
     var updatedEnergyDrink: EnergyDrinkItem = this.copy(image = "", bitmap = null)
     try {
-
         val downloadImage =
             TedfApplication().container.TedfStorage.child("energydrinks/" + this.image)
                 .getBytes(
@@ -55,8 +55,9 @@ suspend fun EnergyDrinkItem.loadImage(): EnergyDrinkItem {
                 }
 
         downloadImage.await()
-    } catch (e: com.google.firebase.storage.StorageException ){
-        Log.d("ENERGYDRINK DOWNLOAD", "could not find image")
+    } catch (e: StorageException) {
+        //set default image here
+        Log.d("ENERGYDRINK DOWNLOAD EXCEPTION", "could not find image ${e}")
     }
     return updatedEnergyDrink
 }
